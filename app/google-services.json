@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "117762378962",
+    "project_id": "cf-player",
+    "storage_bucket": "cf-player.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:117762378962:android:7b13d5feae2f143535710b",
+        "android_client_info": {
+          "package_name": "com.coldfier.cfmusic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "117762378962-vulk90rbckeslkc56ot9hnsjspb5bk13.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZDNMopkZpzEB6MVSIYcr8nO_MowR510w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "117762378962-vulk90rbckeslkc56ot9hnsjspb5bk13.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

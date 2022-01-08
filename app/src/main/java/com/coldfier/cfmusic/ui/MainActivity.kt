@@ -1,7 +1,8 @@
-package com.coldfier.cfmusic
+package com.coldfier.cfmusic.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import com.coldfier.cfmusic.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
