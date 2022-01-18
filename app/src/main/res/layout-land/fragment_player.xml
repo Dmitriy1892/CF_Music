@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_expanded"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            tools:visibility="visible">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_scrollFlags="scroll|enterAlways">
+
+                    <ImageButton
+                        android:id="@+id/btn_collapse"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="start|center_vertical"
+                        android:background="@null"
+                        android:minHeight="48dp"
+                        android:src="@drawable/ic_collapse_arrow"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <TextView
+                        style="@style/TitleTextStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/fragment_player_title" />
+                </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_song_previews"
+                android:layout_width="0dp"
+                android:layout_height="260dp"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appbar" />
+
+            <TextView
+                android:id="@+id/tv_song_name"
+                style="@style/SongNameTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="60dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vp_song_previews"
+                tools:text="Top Of The World" />
+
+            <TextView
+                android:id="@+id/tv_song_artist"
+                style="@style/SongArtistTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="60dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_song_name"
+                tools:text="Imagine Dragons" />
+
+            <CheckBox
+                android:id="@+id/cb_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:button="@drawable/selector_checkbox_favorite_song"
+                android:buttonTint="#8996B8"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/tv_song_artist"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_song_name"
+                app:layout_constraintVertical_bias="0.2" />
+
+            <CheckBox
+                android:id="@+id/cb_volume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="110dp"
+                android:button="@drawable/selector_checkbox_volume"
+                android:buttonTint="#8996B8"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vp_song_previews" />
+
+            <CheckBox
+                android:id="@+id/cb_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:button="@drawable/selector_checkbox_repeat"
+                android:buttonTint="#8996B8"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/cb_volume"
+                app:layout_constraintEnd_toStartOf="@id/cb_shuffle"
+                app:layout_constraintTop_toTopOf="@id/cb_volume" />
+
+            <CheckBox
+                android:id="@+id/cb_shuffle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:button="@drawable/selector_checkbox_shuffle"
+                android:buttonTint="#8996B8"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/cb_volume"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cb_volume" />
+
+            <TextView
+                android:id="@+id/tv_song_start_time"
+                style="@style/SongTimeTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cb_volume"
+                tools:text="00:00" />
+
+            <TextView
+                android:id="@+id/tv_song_end_time"
+                style="@style/SongTimeTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_song_start_time"
+                tools:text="03:00" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider_track"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="30dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="100"
+                app:haloColor="#25091227"
+                app:haloRadius="15dp"
+                app:labelBehavior="floating"
+                app:labelStyle="@style/Widget.MaterialComponents.Tooltip"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_song_start_time"
+                app:thumbColor="#091227"
+                app:thumbRadius="9dp"
+                app:trackColorActive="#091227"
+                app:trackColorInactive="#D3D7DF"
+                app:trackHeight="4dp" />
+
+            <ImageButton
+                android:id="@+id/btn_previous_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/selector_previous_song"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_play_song"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/slider_track" />
+
+            <CheckBox
+                android:id="@+id/btn_play_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="45dp"
+                android:layout_marginEnd="45dp"
+                android:background="@null"
+                android:button="@drawable/selector_play_pause_song"
+                android:buttonTint="#091127"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                android:scaleX="2.0"
+                android:scaleY="2.0"
+                android:stateListAnimator="@xml/animate_scale"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btn_next_song"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/btn_previous_song"
+                app:layout_constraintTop_toBottomOf="@id/slider_track" />
+
+            <ImageButton
+                android:id="@+id/btn_next_song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/selector_next_song"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_play_song"
+                app:layout_constraintTop_toBottomOf="@id/slider_track" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_collapsed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:visibility="gone">
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="#0F091227"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_image_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider">
+
+                <ImageView
+                    android:id="@+id/image_view_song_collapsed"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/bg_song_placeholder" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tv_song_name_collapsed"
+                style="@style/SongNameTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:gravity="start|center_vertical"
+                android:textSize="14sp"
+                app:layout_constraintStart_toEndOf="@id/cv_image_container"
+                app:layout_constraintTop_toTopOf="@id/cv_image_container"
+                tools:text="Top Of The World" />
+
+            <TextView
+                android:id="@+id/tv_song_artist_collapsed"
+                style="@style/SongArtistTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:gravity="start|center_vertical"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@id/tv_song_name_collapsed"
+                app:layout_constraintTop_toBottomOf="@id/tv_song_name_collapsed"
+                tools:text="Imagine Dragons" />
+
+            <ImageButton
+                android:id="@+id/btn_previous_song_collapsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:background="@null"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:src="@drawable/selector_previous_song"
+                app:layout_constraintBottom_toBottomOf="@id/btn_play_song_collapsed"
+                app:layout_constraintEnd_toStartOf="@+id/btn_play_song_collapsed"
+                app:layout_constraintTop_toTopOf="@id/btn_play_song_collapsed" />
+
+            <CheckBox
+                android:id="@+id/btn_play_song_collapsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="15dp"
+                android:background="@null"
+                android:button="@drawable/selector_play_pause_song"
+                android:buttonTint="#091127"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:scaleType="fitXY"
+                android:scaleX="1.2"
+                android:scaleY="1.2"
+                android:stateListAnimator="@xml/animate_scale"
+                app:layout_constraintBottom_toBottomOf="@id/btn_next_song_collapsed"
+                app:layout_constraintEnd_toStartOf="@+id/btn_next_song_collapsed"
+                app:layout_constraintTop_toTopOf="@id/btn_next_song_collapsed" />
+
+            <ImageButton
+                android:id="@+id/btn_next_song_collapsed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="15dp"
+                android:background="@null"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:src="@drawable/selector_next_song"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cv_image_container" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider_track_collapsed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:value="0"
+                android:valueFrom="0"
+                android:valueTo="100"
+                app:haloColor="#25091227"
+                app:haloRadius="15dp"
+                app:labelBehavior="floating"
+                app:labelStyle="@style/Widget.MaterialComponents.Tooltip"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_song_artist_collapsed"
+                app:layout_constraintTop_toBottomOf="@id/tv_song_artist_collapsed"
+                app:thumbColor="#091227"
+                app:thumbRadius="9dp"
+                app:thumbStrokeWidth="0dp"
+                app:trackColorActive="#091227"
+                app:trackColorInactive="#D3D7DF"
+                app:trackHeight="4dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</layout>

@@ -3,7 +3,41 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout/activity_main.xml" value="0.13020833333333334" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable-anydpi/ic_collapse_arrow.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable-anydpi/ic_favorite_off.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/bg_song_placeholder.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/bg_tab_indicator.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_checkbox_favorite_song.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_checkbox_volume.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_favorite_off.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_favorite_on.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_launcher_background.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_pause.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_play.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_previous_song_off.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_volume_off.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/ic_volume_on.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_checkbox_favorite_song.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_checkbox_repeat.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_checkbox_shuffle.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_checkbox_volume.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_next_song.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_play_pause_song.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/selector_previous_song.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/drawable/slider_thumb.xml" value="0.2703125" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/font-v26/sf_pro_display.xml" value="0.284375" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/font/abeezee.xml" value="0.284375" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/font/ff.xml" value="0.284375" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/font/sf_font_family.xml" value="0.284375" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/font/sf_medium_ff.xml" value="0.284375" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/font/sf_pro_display.xml" value="0.284375" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout-land/fragment_player.xml" value="0.3416666666666667" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout/activity_main2.xml" value="0.25416666666666665" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout/fragment_folders.xml" value="0.264" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout/fragment_player.xml" value="0.1" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/layout/pager_item_image.xml" value="0.176" />
+        <entry key="..\:/Kotlin/CFMusic/app/src/main/res/xml/animate_scale.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
