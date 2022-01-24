@@ -2,18 +2,22 @@ package com.coldfier.cfmusic.ui.player_fragment
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
 import com.coldfier.cfmusic.ui.MainActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
+import kotlinx.coroutines.delay
 
 const val BOTTOM_SHEET_STATE = "com.coldfier.cfmusic.ui.player_fragment.bottom_sheet_state"
 
 class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.layout.fragment_player) {
-    override val viewModel: () -> PlayerViewModel by viewModels()
+
+    override val viewModel by viewModels<PlayerViewModel> { viewModelFactory }
 
     private val behavior by lazy {
         BottomSheetBehavior.from((requireActivity() as MainActivity).binding.bottomSheet)
@@ -21,7 +25,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
         initClickers()
         initObservers()
@@ -49,6 +52,12 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
     private fun initViews() {
         binding.vpSongPreviews.adapter = PlayerViewPagerAdapter()
+
+        lifecycleScope.launchWhenStarted {
+            delay(3000)
+            Toast.makeText(requireContext(), viewModel.getHello(), Toast.LENGTH_LONG).show()
+        }
+
     }
 
     private fun initClickers() {

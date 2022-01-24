@@ -8,6 +8,9 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.coldfier.cfmusic.App
+import com.coldfier.cfmusic.di.factory.ViewModelFactory
+import javax.inject.Inject
 
 abstract class BaseFragment<VM: BaseViewModel, MBinding: ViewDataBinding>(
     @LayoutRes private val layoutRes: Int
@@ -17,7 +20,16 @@ abstract class BaseFragment<VM: BaseViewModel, MBinding: ViewDataBinding>(
     val binding: MBinding
         get() = _binding!!
 
-    abstract val viewModel: () -> VM
+    abstract val viewModel: VM
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        (requireContext().applicationContext as App).appComponent.inject(this as BaseFragment<BaseViewModel, ViewDataBinding>)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
