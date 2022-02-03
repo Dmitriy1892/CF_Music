@@ -8,12 +8,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 31
 
     defaultConfig {
         applicationId "com.coldfier.cfmusic"
         minSdk 21
-        targetSdk 32
+        targetSdk 31
         versionCode 1
         versionName "1.0"
 
@@ -50,6 +50,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

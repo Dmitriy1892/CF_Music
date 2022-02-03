@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
 import com.coldfier.cfmusic.ui.MainActivity
@@ -12,6 +14,7 @@ import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 const val BOTTOM_SHEET_STATE = "com.coldfier.cfmusic.ui.player_fragment.bottom_sheet_state"
 
@@ -53,9 +56,12 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     private fun initViews() {
         binding.vpSongPreviews.adapter = PlayerViewPagerAdapter()
 
-        lifecycleScope.launchWhenStarted {
-            delay(3000)
-            Toast.makeText(requireContext(), viewModel.getHello(), Toast.LENGTH_LONG).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                delay(1000)
+                Toast.makeText(requireContext(), viewModel.getHello(), Toast.LENGTH_LONG).show()
+            }
+
         }
 
     }

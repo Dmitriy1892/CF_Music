@@ -1,5 +1,7 @@
 package com.coldfier.cfmusic.ui.folders_fragment
 
+import android.content.Context
+import android.media.AudioManager
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -17,6 +19,11 @@ class FoldersFragment :
         super.onViewCreated(view, savedInstanceState)
 
         val ms = MediaStore.Files()
+
+        val audioManager = requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+//        ExoPlayer.Builder(requireContext()).setLooper(Looper.getMainLooper()).setMediaSourceFactory(
+//            MediaSourceFactory.UNSUPPORTED.createMediaSource(MediaItem.fromUri())
+//        )
     }
 
     private fun initViews() {
