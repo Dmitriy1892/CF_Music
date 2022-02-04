@@ -2,6 +2,7 @@ package com.coldfier.cfmusic.di
 
 import android.content.Context
 import androidx.databinding.ViewDataBinding
+import com.coldfier.cfmusic.di.module.DatabaseModule
 import com.coldfier.cfmusic.di.module.ViewModelsModule
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.coldfier.cfmusic.ui.base.BaseViewModel
@@ -13,6 +14,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
     ViewModelsModule::class,
+    DatabaseModule::class
 ])
 interface AppComponent {
 

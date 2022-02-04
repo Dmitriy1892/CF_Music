@@ -1,8 +1,13 @@
 package com.coldfier.cfmusic.ui.player_fragment
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,9 +16,11 @@ import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
 import com.coldfier.cfmusic.ui.MainActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 const val BOTTOM_SHEET_STATE = "com.coldfier.cfmusic.ui.player_fragment.bottom_sheet_state"
@@ -31,6 +38,14 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         initViews()
         initClickers()
         initObservers()
+
+        if (!checkExternalStoragePermissions()) {
+            requestExternalStoragePermission()
+            viewModel.getSongList()
+        } else {
+            viewModel.getSongList()
+        }
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -144,6 +159,47 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     }
 
     private fun initObservers() {
+        collectFlowInCoroutine {
+            viewModel.roomSongListStateFlow.collect {
+                Toast.makeText(requireContext(), "Oooookaaaaaay, let's go....", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
+    private fun initPlayer() {
+        val player = ExoPlayer.Builder(requireContext()).build()
+//        val mediaItem = MediaItem.fromUri()
+    }
+
+    private fun checkExternalStoragePermissions(): Boolean {
+        val permissionRead = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        val permissionWrite = ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+
+        return  permissionRead == PackageManager.PERMISSION_GRANTED
+                &&  permissionWrite == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestExternalStoragePermission() {
+        ActivityCompat.requestPermissions(
+            requireActivity(),
+            arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ),
+            1
+        )
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (isGranted) {
+            viewModel.getSongList()
+        } else {
+            requestExternalStoragePermission()
+        }
     }
 }

@@ -8,8 +8,12 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.coldfier.cfmusic.App
 import com.coldfier.cfmusic.di.factory.ViewModelFactory
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 abstract class BaseFragment<VM: BaseViewModel, MBinding: ViewDataBinding>(
@@ -43,5 +47,13 @@ abstract class BaseFragment<VM: BaseViewModel, MBinding: ViewDataBinding>(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun collectFlowInCoroutine(func: suspend () -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                func.invoke()
+            }
+        }
     }
 }

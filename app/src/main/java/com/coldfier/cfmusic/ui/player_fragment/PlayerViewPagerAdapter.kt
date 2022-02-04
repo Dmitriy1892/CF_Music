@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.coldfier.cfmusic.R
-import com.coldfier.cfmusic.data.database_room.model.Song
+import com.coldfier.cfmusic.data.database_room.model.RoomSong
 import com.coldfier.cfmusic.databinding.PagerItemImageBinding
+import com.coldfier.cfmusic.use_case.model.Song
 
 class PlayerViewPagerAdapter: ListAdapter<Song, PlayerViewPagerAdapter.PlayerViewHolder>(PlayerAdapterUtil()) {
 
