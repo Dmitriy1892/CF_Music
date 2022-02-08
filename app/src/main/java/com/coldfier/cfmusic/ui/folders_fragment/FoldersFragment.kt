@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.data.database_room.model.SongFolder
 import com.coldfier.cfmusic.databinding.FragmentFoldersBinding
@@ -61,6 +62,10 @@ class FoldersFragment :
     }
 
     override fun folderClicked(folder: SongFolder) {
-        //TODO - OPEN THE FOLDER FRAGMENT
+        folder.folderName?.let {
+            val action = FoldersFragmentDirections.actionFoldersFragmentToPickedFolderFragment(it)
+            findNavController().navigate(action)
+        }
+
     }
 }
