@@ -3,6 +3,7 @@ package com.coldfier.cfmusic.data.database_room.repository
 import com.coldfier.cfmusic.data.database_room.dao.RoomSongDao
 import com.coldfier.cfmusic.data.database_room.model.RoomSong
 import com.coldfier.cfmusic.data.database_room.model.SongFolder
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class RoomRepository @Inject constructor(
@@ -24,32 +25,26 @@ class RoomRepository @Inject constructor(
         return roomSongDao.getFavoritesSongs()
     }
 
-    suspend fun getSongFoldersList(): List<SongFolder> {
-        val folders = roomSongDao.getSongFolderNames()
+    fun getSongFoldersList(): Flow<List<SongFolder>> {
+        val folders = roomSongDao.getFolders()
         val tempSongFolderMap = mutableMapOf<String, Int>()
-        folders.forEach {
-            if (it.folderName == null) {
-                it.folderName = it.fullPath
-                    ?.substringBeforeLast("/")
-                    ?.substringAfterLast("/")
-                    ?.replace("/", "")
-            }
-
-            it.folderName?.let { folder ->
-                tempSongFolderMap[folder]?.let { value ->
-                    tempSongFolderMap[folder] = value + 1
-                } ?: kotlin.run {
-                    tempSongFolderMap.put(folder, 1)
+        return folders.map { list ->
+            list.forEach { roomSong ->
+                roomSong.folderName?.let { folder ->
+                    tempSongFolderMap[folder]?.let { value ->
+                        tempSongFolderMap[folder] = value + 1
+                    } ?: kotlin.run {
+                        tempSongFolderMap.put(folder, 1)
+                    }
                 }
             }
-        }
 
-        val songFolderList = tempSongFolderMap.map {
-            SongFolder(
-                folderName = it.key,
-                songsQuantity = it.value
-            )
+            tempSongFolderMap.map {
+                SongFolder(
+                    folderName = it.key,
+                    songsQuantity = it.value
+                )
+            }
         }
-        return songFolderList
     }
 }

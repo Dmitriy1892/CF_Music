@@ -11,18 +11,22 @@ import com.coldfier.cfmusic.data.database_room.model.RoomSong
 import com.coldfier.cfmusic.data.external_storage.model.ExternalStorageSong
 import com.coldfier.cfmusic.use_case.model.Song
 
-fun RoomSong.convertToSong(context: Context) = Song(
-    songName = this.songName,
-    songId = this.songId,
-    artist = this.artist,
-    artistId = this.artistId,
-    albumName = this.albumName,
-    albumId = this.albumId,
-    fullPath = this.fullPath,
-    imageThumbnail = this.songId?.let { getSongThumbnail(it, context) },
-    isFavorite = this.isFavorite,
-    timeStampPaused = this.timeStampPaused
-)
+fun RoomSong.convertToSong(context: Context) = this.isFavorite?.let {
+    this.timeStampPaused?.let { it1 ->
+        Song(
+        songName = this.songName,
+        songId = this.songId,
+        artist = this.artist,
+        artistId = this.artistId,
+        albumName = this.albumName,
+        albumId = this.albumId,
+        fullPath = this.fullPath,
+        imageThumbnail = this.songId?.let { getSongThumbnail(it, context) },
+        isFavorite = it,
+        timeStampPaused = it1
+    )
+    }
+}
 
 fun Song.convertToRoomSong() = RoomSong(
     songName = this.songName,
@@ -43,7 +47,11 @@ fun ExternalStorageSong.convertToRoomSong() = RoomSong(
     artistId = this.artistId,
     albumName = this.albumName,
     albumId = this.albumId,
-    fullPath = this.fullPath
+    fullPath = this.fullPath,
+    folderName = this.fullPath
+        ?.substringBeforeLast("/")
+        ?.substringAfterLast("/")
+        ?.replace("/", "")
 )
 
 private fun getSongThumbnail(songId: Int, appContext: Context): Bitmap {

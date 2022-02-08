@@ -16,8 +16,9 @@
             android:layout_gravity="center_horizontal"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            app:spanCount="4"
-            tools:listitem="@layout/rv_item_music_folder" />
+            app:spanCount="3"
+            tools:listitem="@layout/rv_item_music_folder"
+            tools:itemCount="70"/>
 
     </FrameLayout>
 </layout>

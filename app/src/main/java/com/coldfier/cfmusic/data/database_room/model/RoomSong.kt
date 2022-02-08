@@ -24,7 +24,7 @@ data class RoomSong(
     @ColumnInfo(name = "full_path")
     var fullPath: String? = null,
     @ColumnInfo(name = "is_favorite")
-    var isFavorite: Boolean = false,
+    var isFavorite: Boolean? = false,
     @ColumnInfo(name = "time_stamp_paused")
-    var timeStampPaused: Double = 0.0
+    var timeStampPaused: Double? = 0.0
 )
