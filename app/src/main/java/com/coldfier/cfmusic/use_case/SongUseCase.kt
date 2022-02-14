@@ -25,6 +25,11 @@ class SongUseCase @Inject constructor(
         return roomSongs.map { it.convertToSong(appContext) ?: Song() }
     }
 
+    suspend fun getSongById(songId: Int): Song {
+        val roomSong = roomRepository.getSongById(songId)
+        return roomSong.convertToSong(appContext) ?: Song()
+    }
+
     fun getSongFoldersList(): Flow<List<SongFolder>> {
         return roomRepository.getSongFoldersList()
     }

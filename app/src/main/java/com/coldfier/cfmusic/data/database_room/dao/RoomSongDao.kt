@@ -14,6 +14,9 @@ interface RoomSongDao {
     @Update
     suspend fun updateSongInfo(roomSong: RoomSong)
 
+    @Query("SELECT * FROM TABLE_SONG WHERE song_id = :songId")
+    suspend fun getSongById(songId: Int): RoomSong
+
     @Query("SELECT * FROM table_song WHERE folder_name = :folderName ORDER BY artist_name ASC")
     fun getSongsWithFolder(folderName: String): Flow<List<RoomSong>>
 

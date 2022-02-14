@@ -1,9 +1,16 @@
 package com.coldfier.cfmusic.ui.player_fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckBox
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -12,16 +19,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
 import com.coldfier.cfmusic.ui.MainActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
+import com.coldfier.cfmusic.ui.picked_folder_fragment.ACTION_SONG_PICKED
+import com.coldfier.cfmusic.ui.picked_folder_fragment.SONG_KEY
+import com.coldfier.cfmusic.use_case.model.Song
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.concurrent.timerTask
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 const val BOTTOM_SHEET_STATE = "com.coldfier.cfmusic.ui.player_fragment.bottom_sheet_state"
 
@@ -31,6 +47,17 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
     private val behavior by lazy {
         BottomSheetBehavior.from((requireActivity() as MainActivity).binding.bottomSheet)
+    }
+
+    private var player: ExoPlayer? = null
+
+    val songBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == ACTION_SONG_PICKED) {
+                val song = intent.getParcelableExtra<Song>(SONG_KEY)
+                song?.let { viewModel.setCurrentSong(it) }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,6 +73,9 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
             viewModel.getSongList()
         }
 
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(songBroadcastReceiver, IntentFilter(
+            ACTION_SONG_PICKED)
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -65,6 +95,19 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
                     activityAppBar.setExpanded(false, false)
                 }
             }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopTimer()
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        if (player != null) {
+            startTimer()
         }
     }
 
@@ -136,12 +179,39 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         }
 
         binding.sliderTrack.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+            @SuppressLint("RestrictedApi")
+            override fun onStartTrackingTouch(slider: Slider) {
+            }
+
+            @SuppressLint("RestrictedApi")
+            override fun onStopTrackingTouch(slider: Slider) {
+                player?.let {
+                    val pickedPosition = slider.value.toLong()
+                    val audioDuration = it.duration
+
+                    val newPosition = pickedPosition * audioDuration / 100
+
+                    it.seekTo(newPosition)
+                }
+            }
+        })
+
+        binding.sliderTrackCollapsed.addOnSliderTouchListener(object : Slider.OnSliderTouchListener{
+            @SuppressLint("RestrictedApi")
             override fun onStartTrackingTouch(slider: Slider) {
 
             }
 
+            @SuppressLint("RestrictedApi")
             override fun onStopTrackingTouch(slider: Slider) {
+                player?.let {
+                    val pickedPosition = slider.value
+                    val audioDuration = it.duration
 
+                    val newPosition = pickedPosition * audioDuration / 100
+
+                    it.seekTo(newPosition.roundToLong())
+                }
             }
         })
 
@@ -150,7 +220,19 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         }
 
         binding.btnPlaySong.setOnClickListener {
+            if (!(it as CheckBox).isChecked) {
+                pause()
+            } else {
+                play()
+            }
+        }
 
+        binding.btnPlaySongCollapsed.setOnClickListener {
+            if (!(it as CheckBox).isChecked) {
+                pause()
+            } else {
+                play()
+            }
         }
 
         binding.btnNextSong.setOnClickListener {
@@ -164,11 +246,84 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
                 Toast.makeText(requireContext(), "Oooookaaaaaay, let's go....", Toast.LENGTH_SHORT).show()
             }
         }
+
+        collectFlowInCoroutine {
+            viewModel.currentSongStateFlow.collect { song ->
+                song.fullPath?.let { path ->
+                    preparePlayer(path)
+                }
+                renderSongInfo(song)
+            }
+        }
     }
 
-    private fun initPlayer() {
-        val player = ExoPlayer.Builder(requireContext()).build()
-//        val mediaItem = MediaItem.fromUri()
+    private var timerTask: TimerTask? = null
+    private var timer = Timer()
+
+    private fun preparePlayer(filePath: String) {
+        player = ExoPlayer.Builder(requireContext()).build()
+        val uri = Uri.parse(filePath)
+        val mediaItem = MediaItem.fromUri(uri)
+        player?.setMediaItem(mediaItem)
+        player?.prepare()
+    }
+
+    private fun destroyPlayer() {
+        player?.release()
+        stopTimer()
+    }
+
+    private fun play() {
+        player?.play()
+        startTimer()
+    }
+
+    private fun pause() {
+        player?.pause()
+        stopTimer()
+    }
+
+    private fun renderSongInfo(song: Song) {
+        (binding.vpSongPreviews.adapter as PlayerViewPagerAdapter).submitList(listOf(song))
+        song.imageThumbnail?.let {
+            binding.imageViewSongCollapsed.setImageBitmap(it)
+        }
+
+        song.songName?.let {
+            binding.tvSongName.text = it
+            binding.tvSongNameCollapsed.text = it
+        }
+
+        song.artist?.let {
+            binding.tvSongArtist.text = it
+            binding.tvSongArtistCollapsed.text = it
+        }
+    }
+
+    private fun startTimer() {
+        timerTask = timerTask {
+            try {
+                requireActivity().runOnUiThread {
+                    player?.let {
+                        val percentage = it.currentPosition * 100 / it.duration
+                        binding.sliderTrack.value = percentage.toFloat()
+                        binding.sliderTrackCollapsed.value = percentage.toFloat()
+                    }
+                }
+            } catch (e: Exception) {
+
+            }
+        }
+        timer = Timer()
+        timer.schedule(timerTask, 0, 1000)
+    }
+
+    private fun stopTimer() {
+        try {
+            timer.cancel()
+        } catch (e: Exception) {
+
+        }
     }
 
     private fun checkExternalStoragePermissions(): Boolean {

@@ -3,11 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_play_pause_song.xml" value="0.2985" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout-land/fragment_player.xml" value="0.4036036036036036" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/fragment_folders.xml" value="0.23232323232323232" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/fragment_picked_folder.xml" value="0.36666666666666664" />
-        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/fragment_player.xml" value="0.36666666666666664" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/fragment_player.xml" value="0.22" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/pager_item_image.xml" value="0.1" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/rv_item_music_folder.xml" value="0.33" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/rv_item_song_info.xml" value="0.5" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/sandbox.xml" value="0.36666666666666664" />

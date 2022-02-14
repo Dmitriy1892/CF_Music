@@ -1,8 +1,10 @@
 package com.coldfier.cfmusic.ui.picked_folder_fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.navArgs
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPickedFolderBinding
@@ -47,5 +49,12 @@ class PickedFolderFragment: BaseFragment<PickedFolderViewModel, FragmentPickedFo
 
     override fun songPicked(song: Song) {
         //TODO - PLAY PICKED MUSIC
+
+        val intent = Intent(ACTION_SONG_PICKED)
+        intent.putExtra(SONG_KEY, song)
+        LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
     }
 }
+
+const val ACTION_SONG_PICKED = "com.coldfier.cfmusic.song_picked"
+const val SONG_KEY = "com.coldfier.cfmusic.song_key"

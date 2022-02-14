@@ -17,6 +17,10 @@ class RoomRepository @Inject constructor(
         roomSongDao.updateSongInfo(song)
     }
 
+    suspend fun getSongById(songId: Int): RoomSong {
+        return roomSongDao.getSongById(songId)
+    }
+
     fun getSongsByFolder(folderName: String): Flow<List<RoomSong>> {
         return roomSongDao.getSongsWithFolder(folderName)
     }
