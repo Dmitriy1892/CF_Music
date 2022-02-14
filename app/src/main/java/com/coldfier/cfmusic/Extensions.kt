@@ -17,7 +17,24 @@ import com.coldfier.cfmusic.data.external_storage.model.ExternalStorageSong
 import com.coldfier.cfmusic.use_case.model.Song
 import java.lang.NullPointerException
 
-fun RoomSong.convertToSong(context: Context) = this.isFavorite?.let {
+fun RoomSong.convertToSong() = this.isFavorite?.let {
+    this.timeStampPaused?.let { it1 ->
+        Song(
+            songName = this.songName,
+            songId = this.songId,
+            artist = this.artist,
+            artistId = this.artistId,
+            albumName = this.albumName,
+            albumId = this.albumId,
+            fullPath = this.fullPath,
+            folderName = this.folderName,
+            isFavorite = it,
+            timeStampPaused = it1
+        )
+    }
+}
+
+fun RoomSong.convertToSongWithThumbnail(context: Context) = this.isFavorite?.let {
     this.timeStampPaused?.let { it1 ->
         Song(
             songName = this.songName,

@@ -11,14 +11,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
@@ -31,12 +27,9 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.timerTask
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 const val BOTTOM_SHEET_STATE = "com.coldfier.cfmusic.ui.player_fragment.bottom_sheet_state"
@@ -65,13 +58,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         initViews()
         initClickers()
         initObservers()
-
-        if (!checkExternalStoragePermissions()) {
-            requestExternalStoragePermission()
-            viewModel.getSongList()
-        } else {
-            viewModel.getSongList()
-        }
 
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(songBroadcastReceiver, IntentFilter(
             ACTION_SONG_PICKED)
@@ -113,15 +99,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
     private fun initViews() {
         binding.vpSongPreviews.adapter = PlayerViewPagerAdapter()
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                delay(1000)
-                Toast.makeText(requireContext(), viewModel.getHello(), Toast.LENGTH_LONG).show()
-            }
-
-        }
-
     }
 
     private fun initClickers() {
@@ -241,11 +218,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     }
 
     private fun initObservers() {
-        collectFlowInCoroutine {
-            viewModel.roomSongListStateFlow.collect {
-                Toast.makeText(requireContext(), "Oooookaaaaaay, let's go....", Toast.LENGTH_SHORT).show()
-            }
-        }
 
         collectFlowInCoroutine {
             viewModel.currentSongStateFlow.collect { song ->
@@ -323,38 +295,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
             timer.cancel()
         } catch (e: Exception) {
 
-        }
-    }
-
-    private fun checkExternalStoragePermissions(): Boolean {
-        val permissionRead = ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-
-        val permissionWrite = ContextCompat.checkSelfPermission(
-            requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-
-        return  permissionRead == PackageManager.PERMISSION_GRANTED
-                &&  permissionWrite == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestExternalStoragePermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ),
-            1
-        )
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            viewModel.getSongList()
-        } else {
-            requestExternalStoragePermission()
         }
     }
 }

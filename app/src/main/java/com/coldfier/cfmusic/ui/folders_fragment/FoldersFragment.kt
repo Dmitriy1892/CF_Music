@@ -66,6 +66,5 @@ class FoldersFragment :
             val action = FoldersFragmentDirections.actionFoldersFragmentToPickedFolderFragment(it)
             findNavController().navigate(action)
         }
-
     }
 }
