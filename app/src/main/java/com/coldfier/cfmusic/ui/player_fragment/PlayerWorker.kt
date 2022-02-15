@@ -45,10 +45,6 @@ class PlayerWorker(
                 ACTION_REQUEST_NEXT_SONG -> {
 
                 }
-
-                ACTION_SONG_PICKED -> {
-
-                }
             }
         }
     }
