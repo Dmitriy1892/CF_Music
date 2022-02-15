@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/white"
+    android:weightSum="9"
+    tools:visibility="visible">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher_round" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_song_name_collapsed"
+            style="@style/SongNameTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="12dp"
+            android:gravity="start|center_vertical"
+            android:textSize="14sp"
+            tools:text="Top Of The World" />
+
+        <TextView
+            android:id="@+id/tv_song_artist_collapsed"
+            style="@style/SongArtistTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:gravity="start|center_vertical"
+            android:textSize="12sp"
+            tools:text="Imagine Dragons" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_previous_song_collapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:scaleX="0.7"
+            android:scaleY="0.7"
+            android:src="@drawable/selector_previous_song" />
+
+        <ImageButton
+            android:id="@+id/btn_play_song_collapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:src="@drawable/selector_play_pause_song"
+            android:buttonTint="#091127"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:padding="0dp"
+            android:scaleType="fitXY"
+            android:scaleX="1.2"
+            android:scaleY="1.2"
+            android:stateListAnimator="@xml/animate_scale" />
+
+        <ImageButton
+            android:id="@+id/btn_next_song_collapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:layout_gravity="center_vertical"
+            android:background="@null"
+            android:scaleX="0.7"
+            android:scaleY="0.7"
+            android:src="@drawable/selector_next_song" />
+    </LinearLayout>
+</LinearLayout>
+

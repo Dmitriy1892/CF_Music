@@ -1,21 +1,16 @@
 package com.coldfier.cfmusic.ui.player_fragment
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.coldfier.cfmusic.App
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
 import com.coldfier.cfmusic.ui.MainActivity
@@ -24,11 +19,11 @@ import com.coldfier.cfmusic.ui.picked_folder_fragment.ACTION_SONG_PICKED
 import com.coldfier.cfmusic.ui.picked_folder_fragment.SONG_KEY
 import com.coldfier.cfmusic.use_case.model.Song
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.slider.Slider
 import kotlinx.coroutines.flow.collect
 import java.util.*
+import javax.inject.Inject
 import kotlin.concurrent.timerTask
 import kotlin.math.roundToLong
 
@@ -42,15 +37,22 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         BottomSheetBehavior.from((requireActivity() as MainActivity).binding.bottomSheet)
     }
 
-    private var player: ExoPlayer? = null
+    @Inject
+    lateinit var player: ExoPlayer
 
-    val songBroadcastReceiver = object : BroadcastReceiver() {
+    private val songBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == ACTION_SONG_PICKED) {
                 val song = intent.getParcelableExtra<Song>(SONG_KEY)
                 song?.let { viewModel.setCurrentSong(it) }
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        (requireContext().applicationContext as App).appComponent.injectPlayer(this)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,9 +94,7 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     override fun onStart() {
         super.onStart()
 
-        if (player != null) {
-            startTimer()
-        }
+        startTimer()
     }
 
     private fun initViews() {
@@ -162,7 +162,7 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
             @SuppressLint("RestrictedApi")
             override fun onStopTrackingTouch(slider: Slider) {
-                player?.let {
+                player.let {
                     val pickedPosition = slider.value.toLong()
                     val audioDuration = it.duration
 
@@ -181,7 +181,7 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
             @SuppressLint("RestrictedApi")
             override fun onStopTrackingTouch(slider: Slider) {
-                player?.let {
+                player.let {
                     val pickedPosition = slider.value
                     val audioDuration = it.duration
 
@@ -221,9 +221,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
         collectFlowInCoroutine {
             viewModel.currentSongStateFlow.collect { song ->
-                song.fullPath?.let { path ->
-                    preparePlayer(path)
-                }
                 renderSongInfo(song)
             }
         }
@@ -232,26 +229,13 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     private var timerTask: TimerTask? = null
     private var timer = Timer()
 
-    private fun preparePlayer(filePath: String) {
-        player = ExoPlayer.Builder(requireContext()).build()
-        val uri = Uri.parse(filePath)
-        val mediaItem = MediaItem.fromUri(uri)
-        player?.setMediaItem(mediaItem)
-        player?.prepare()
-    }
-
-    private fun destroyPlayer() {
-        player?.release()
-        stopTimer()
-    }
-
     private fun play() {
-        player?.play()
+        player.play()
         startTimer()
     }
 
     private fun pause() {
-        player?.pause()
+        player.pause()
         stopTimer()
     }
 
@@ -276,7 +260,7 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         timerTask = timerTask {
             try {
                 requireActivity().runOnUiThread {
-                    player?.let {
+                    player.let {
                         val percentage = it.currentPosition * 100 / it.duration
                         binding.sliderTrack.value = percentage.toFloat()
                         binding.sliderTrackCollapsed.value = percentage.toFloat()

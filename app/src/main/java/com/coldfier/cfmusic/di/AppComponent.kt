@@ -2,10 +2,13 @@ package com.coldfier.cfmusic.di
 
 import android.content.Context
 import androidx.databinding.ViewDataBinding
+import com.coldfier.cfmusic.App
 import com.coldfier.cfmusic.di.module.DatabaseModule
+import com.coldfier.cfmusic.di.module.PlayerModule
 import com.coldfier.cfmusic.di.module.ViewModelsModule
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.coldfier.cfmusic.ui.base.BaseViewModel
+import com.coldfier.cfmusic.ui.player_fragment.PlayerFragment
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -14,11 +17,16 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [
     ViewModelsModule::class,
-    DatabaseModule::class
+    DatabaseModule::class,
+    PlayerModule::class
 ])
 interface AppComponent {
 
     fun inject(fragment: BaseFragment<BaseViewModel, ViewDataBinding>)
+
+    fun injectApp(application: App)
+
+    fun injectPlayer(fragment: PlayerFragment)
 
     @Component.Builder
     interface Builder {
