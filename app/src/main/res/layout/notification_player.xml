@@ -69,7 +69,7 @@
             android:scaleY="0.7"
             android:src="@drawable/selector_previous_song" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btn_play_song_collapsed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
             android:layout_marginBottom="12dp"
             android:layout_gravity="center_vertical"
             android:background="@null"
-            android:src="@drawable/selector_play_pause_song"
+            android:src="@drawable/ic_play"
             android:buttonTint="#091127"
             android:minWidth="0dp"
             android:minHeight="0dp"

@@ -17,6 +17,7 @@ import com.coldfier.cfmusic.ui.MainActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.coldfier.cfmusic.ui.picked_folder_fragment.ACTION_SONG_PICKED
 import com.coldfier.cfmusic.ui.picked_folder_fragment.SONG_KEY
+import com.coldfier.cfmusic.ui.player_fragment.PlayerWorker.Companion.ACTION_UPDATE_SONG_INFO
 import com.coldfier.cfmusic.use_case.model.Song
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -42,9 +43,12 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
     private val songBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == ACTION_SONG_PICKED) {
-                val song = intent.getParcelableExtra<Song>(SONG_KEY)
-                song?.let { viewModel.setCurrentSong(it) }
+            when (intent?.action) {
+                ACTION_SONG_PICKED, ACTION_UPDATE_SONG_INFO -> {
+                    val song = intent.getParcelableExtra<Song>(SONG_KEY)
+                    song?.let { viewModel.setCurrentSong(it) }
+                }
+
             }
         }
     }
@@ -61,8 +65,9 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         initClickers()
         initObservers()
 
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(songBroadcastReceiver, IntentFilter(
-            ACTION_SONG_PICKED)
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+            songBroadcastReceiver,
+            IntentFilter(ACTION_SONG_PICKED).apply { addAction(ACTION_UPDATE_SONG_INFO) }
         )
     }
 
@@ -193,7 +198,13 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         })
 
         binding.btnPreviousSong.setOnClickListener {
+            val previousSongIntent = Intent(PlayerWorker.ACTION_REQUEST_PREVIOUS_SONG)
+            requireActivity().sendBroadcast(previousSongIntent)
+        }
 
+        binding.btnPreviousSongCollapsed.setOnClickListener {
+            val previousSongIntent = Intent(PlayerWorker.ACTION_REQUEST_PREVIOUS_SONG)
+            requireActivity().sendBroadcast(previousSongIntent)
         }
 
         binding.btnPlaySong.setOnClickListener {
@@ -213,7 +224,13 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         }
 
         binding.btnNextSong.setOnClickListener {
+            val nextSongIntent = Intent(PlayerWorker.ACTION_REQUEST_NEXT_SONG)
+            requireActivity().sendBroadcast(nextSongIntent)
+        }
 
+        binding.btnNextSongCollapsed.setOnClickListener {
+            val nextSongIntent = Intent(PlayerWorker.ACTION_REQUEST_NEXT_SONG)
+            requireActivity().sendBroadcast(nextSongIntent)
         }
     }
 

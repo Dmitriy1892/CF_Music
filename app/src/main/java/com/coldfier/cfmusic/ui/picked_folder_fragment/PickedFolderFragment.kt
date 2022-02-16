@@ -48,8 +48,6 @@ class PickedFolderFragment: BaseFragment<PickedFolderViewModel, FragmentPickedFo
     }
 
     override fun songPicked(song: Song) {
-        //TODO - PLAY PICKED MUSIC
-
         val intent = Intent(ACTION_SONG_PICKED)
         intent.putExtra(SONG_KEY, song)
         LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)

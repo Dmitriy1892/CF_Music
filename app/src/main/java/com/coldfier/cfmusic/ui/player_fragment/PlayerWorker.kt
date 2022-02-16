@@ -22,6 +22,9 @@ import com.coldfier.cfmusic.use_case.SongUseCase
 import com.coldfier.cfmusic.use_case.model.Song
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+import java.util.concurrent.atomic.AtomicReference
 
 class PlayerWorker(
     appContext: Context,
@@ -34,16 +37,50 @@ class PlayerWorker(
         override fun onReceive(context: Context?, intent: Intent?) {
             when(intent?.action) {
                 ACTION_REQUEST_PREVIOUS_SONG -> {
+                    previousSong.get()?.let { song ->
+                        currentSong = song
+                        renderSongInfo(song)
+                        song.fullPath?.let { path -> preparePlayer(path) }
+                        nextSong.set(null)
+                        previousSong.set(null)
 
+                        val intentUpdateSongInfo = Intent(ACTION_UPDATE_SONG_INFO)
+                        intentUpdateSongInfo.putExtra(SONG_KEY, song)
+                        LocalBroadcastManager.getInstance(applicationContext)
+                            .sendBroadcast(intentUpdateSongInfo)
+
+                        getPreviousAndNextSong(song)
+                    }
                 }
 
                 ACTION_REQUEST_PLAY_PAUSE_SONG -> {
-                    if (player.isPlaying) player.pause() else player.play()
+                    if (player.isPlaying) {
+                        player.pause()
+                        notificationLayout
+                            .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_play)
+                    } else {
+                        player.play()
+                        notificationLayout
+                            .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_pause)
+                    }
 
                 }
 
                 ACTION_REQUEST_NEXT_SONG -> {
+                    nextSong.get()?.let { song ->
+                        currentSong = song
+                        renderSongInfo(song)
+                        song.fullPath?.let { path -> preparePlayer(path) }
+                        nextSong.set(null)
+                        previousSong.set(null)
 
+                        val intentUpdateSongInfo = Intent(ACTION_UPDATE_SONG_INFO)
+                        intentUpdateSongInfo.putExtra(SONG_KEY, song)
+                        LocalBroadcastManager.getInstance(applicationContext)
+                            .sendBroadcast(intentUpdateSongInfo)
+
+                        getPreviousAndNextSong(song)
+                    }
                 }
             }
         }
@@ -53,10 +90,12 @@ class PlayerWorker(
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == ACTION_SONG_PICKED) {
                 try {
-                    val song = intent.getParcelableExtra<Song>(SONG_KEY)
-                    song?.let {
+                    currentSong = intent.getParcelableExtra(SONG_KEY)
+                    currentSong?.let {
                         renderSongInfo(it)
                         it.fullPath?.let { path -> preparePlayer(path) }
+                        getPreviousAndNextSong(it)
+//                        player.play()
                     }
                 } catch (e: Exception) {
                     e.message
@@ -64,6 +103,10 @@ class PlayerWorker(
             }
         }
     }
+
+    private var currentSong: Song? = null
+    private var nextSong: AtomicReference<Song?> = AtomicReference(null)
+    private var previousSong: AtomicReference<Song?> = AtomicReference(null)
 
     private val notificationManager =
         appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -99,6 +142,7 @@ class PlayerWorker(
                 MUSIC_CHANNEL_ID, MUSIC_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH
             )
             channel.setSound(null, null)
+            channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -127,9 +171,8 @@ class PlayerWorker(
             .setSmallIcon(R.mipmap.ic_launcher)
             .setCustomContentView(notificationLayout)
             .setSound(null)
-            .build()
 
-        return notification
+        return notification.build()
     }
 
     private fun renderSongInfo(song: Song) {
@@ -145,6 +188,41 @@ class PlayerWorker(
         player.prepare()
     }
 
+    private fun getPreviousAndNextSong(currentSong: Song) {
+        val scope = CoroutineScope(Dispatchers.IO + Job())
+        scope.launch {
+            currentSong.folderName?.let { folderName ->
+                val songList = songUseCase.getSongsFromFolder(folderName).first()
+                val index = kotlin.run {
+                    songList.forEachIndexed { index, song ->
+                        if (song.songId == currentSong.songId) {
+                            return@run index
+                        }
+                    }
+                    scope.cancel()
+                    return@launch
+                }
+
+                if (index + 1 <= songList.lastIndex) {
+                    nextSong.set(songList[index + 1])
+                } else {
+                    val newNextSong = songUseCase.getSongsFromNextFolder(folderName)
+                        .first().getOrElse(0) { null }
+                    nextSong.set(newNextSong)
+                }
+
+                if (index - 1 >= 0) {
+                    previousSong.set(songList[index - 1])
+                } else {
+                    val newSongList = songUseCase.getSongsFromPreviousFolder(folderName).first()
+                    val newPreviousSong = newSongList.getOrElse(newSongList.lastIndex) { null }
+                    previousSong.set(newPreviousSong)
+                }
+            }
+            scope.cancel()
+        }
+    }
+
     companion object {
         const val MUSIC_CHANNEL_ID = "com.coldfier.cfmusic.music_channel_id"
         const val MUSIC_CHANNEL_NAME = "com.coldfier.cfmusic.music_channel_name"
@@ -152,5 +230,7 @@ class PlayerWorker(
         const val ACTION_REQUEST_PREVIOUS_SONG = "com.coldfier.cfmusic.request_previous_song"
         const val ACTION_REQUEST_NEXT_SONG = "com.coldfier.cfmusic.request_next_song"
         const val ACTION_REQUEST_PLAY_PAUSE_SONG = "com.coldfier.cfmusic.request_play_pause_song"
+
+        const val ACTION_UPDATE_SONG_INFO = "com.coldfier.cfmusic.action_update_song_info"
     }
 }
