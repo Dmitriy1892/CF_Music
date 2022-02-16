@@ -95,7 +95,7 @@ class PlayerWorker(
                         renderSongInfo(it)
                         it.fullPath?.let { path -> preparePlayer(path) }
                         getPreviousAndNextSong(it)
-//                        player.play()
+//                        player.play() //TODO - UNCOMMENT AFTER DEBUG
                     }
                 } catch (e: Exception) {
                     e.message

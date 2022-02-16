@@ -6,6 +6,7 @@ import com.coldfier.cfmusic.use_case.SongUseCase
 import com.coldfier.cfmusic.use_case.model.Song
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 class PickedFolderViewModel @Inject constructor(
@@ -16,11 +17,24 @@ class PickedFolderViewModel @Inject constructor(
     val songListStateFlow: StateFlow<List<Song>>
         get() = _songListStateFlow.asStateFlow()
 
+    private val _pickedSongStateFlow = MutableStateFlow(Song())
+    val pickedSongStateFlow: StateFlow<Song>
+        get() = _pickedSongStateFlow.asStateFlow()
+
+    val previousPickedSong = AtomicReference<Song?>()
+
     fun getSongListFromFolder(folderName: String) {
         launchInIOCoroutine {
             songUseCase.getSongsFromFolder(folderName).collect {
                 _songListStateFlow.value = it
             }
+        }
+    }
+
+    fun setPickedSong(song: Song) {
+        launchInIOCoroutine {
+            previousPickedSong.set(_pickedSongStateFlow.value)
+            _pickedSongStateFlow.value = song
         }
     }
 }

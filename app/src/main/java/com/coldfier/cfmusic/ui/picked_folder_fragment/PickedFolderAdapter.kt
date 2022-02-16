@@ -41,7 +41,7 @@ class PickedFolderAdapter(private val callback: Callback):
         fun bind(song: Song) {
             binding.apply {
                 imageViewSongThumbnail.load(song.imageThumbnail)
-                tvSongName.text = song.songName
+                tvSongName.text = song.songName?.substringBeforeLast(".")
                 tvSongArtist.text = song.artist
             }
 
