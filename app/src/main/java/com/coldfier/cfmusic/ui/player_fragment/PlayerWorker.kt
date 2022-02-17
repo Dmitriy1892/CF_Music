@@ -22,6 +22,7 @@ import com.coldfier.cfmusic.use_case.SongUseCase
 import com.coldfier.cfmusic.use_case.model.Song
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.concurrent.atomic.AtomicReference
@@ -186,6 +187,15 @@ class PlayerWorker(
         val mediaItem = MediaItem.fromUri(uri)
         player.setMediaItem(mediaItem)
         player.prepare()
+
+        player.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED) {
+                    val nextSongIntent = Intent(ACTION_REQUEST_NEXT_SONG)
+                    applicationContext.sendBroadcast(nextSongIntent)
+                }
+            }
+        })
     }
 
     private fun getPreviousAndNextSong(currentSong: Song) {

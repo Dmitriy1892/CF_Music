@@ -43,11 +43,21 @@ class PickedFolderFragment: BaseFragment<PickedFolderViewModel, FragmentPickedFo
         initViews()
         initClickers()
         initObservers()
+    }
 
+    override fun onStart() {
+        super.onStart()
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
             songBroadcastReceiver,
             IntentFilter(PlayerWorker.ACTION_UPDATE_SONG_INFO)
         )
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        LocalBroadcastManager
+            .getInstance(requireContext()).unregisterReceiver(songBroadcastReceiver)
     }
 
     private fun initViews() {

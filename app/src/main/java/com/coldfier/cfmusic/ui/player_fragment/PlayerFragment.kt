@@ -64,11 +64,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         initViews()
         initClickers()
         initObservers()
-
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
-            songBroadcastReceiver,
-            IntentFilter(ACTION_SONG_PICKED).apply { addAction(ACTION_UPDATE_SONG_INFO) }
-        )
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -93,13 +88,20 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
 
     override fun onStop() {
         super.onStop()
+
         stopTimer()
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(songBroadcastReceiver)
     }
 
     override fun onStart() {
         super.onStart()
 
         startTimer()
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
+            songBroadcastReceiver,
+            IntentFilter(ACTION_SONG_PICKED).apply { addAction(ACTION_UPDATE_SONG_INFO) }
+        )
     }
 
     private fun initViews() {
