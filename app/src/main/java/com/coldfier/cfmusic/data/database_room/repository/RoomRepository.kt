@@ -1,6 +1,7 @@
 package com.coldfier.cfmusic.data.database_room.repository
 
 import com.coldfier.cfmusic.data.database_room.dao.RoomSongDao
+import com.coldfier.cfmusic.data.database_room.model.RoomAlbum
 import com.coldfier.cfmusic.data.database_room.model.RoomSong
 import com.coldfier.cfmusic.data.database_room.model.SongFolder
 import kotlinx.coroutines.flow.*
@@ -49,6 +50,21 @@ class RoomRepository @Inject constructor(
                     songsQuantity = it.value
                 )
             }
+        }
+    }
+
+    fun getAlbumsList(): Flow<List<RoomAlbum>> {
+        return roomSongDao.getAlbums().flatMapConcat {
+            var currentFolderName: String? = null
+            val newList = mutableListOf<RoomAlbum>()
+            it.forEach { album ->
+                if (album.albumName != currentFolderName) {
+                    newList.add(album)
+                    currentFolderName = album.albumName
+                }
+            }
+
+            flowOf(newList)
         }
     }
 }

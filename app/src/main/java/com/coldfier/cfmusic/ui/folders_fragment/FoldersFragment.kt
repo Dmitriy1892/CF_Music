@@ -19,44 +19,23 @@ class FoldersFragment :
     BaseFragment<FoldersViewModel, FragmentFoldersBinding>(R.layout.fragment_folders),
     FoldersAdapter.Callback {
 
-
-
     override val viewModel by viewModels<FoldersViewModel> { viewModelFactory }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initViews()
-        initClickers()
         initObservers()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        try {
-            if ((binding.rvFolders.adapter as FoldersAdapter).currentList.isEmpty()) {
-                viewModel.updateSongs()
-            }
-        } catch (e: Exception) {  }
     }
 
     private fun initViews() {
         binding.rvFolders.adapter = FoldersAdapter(this)
     }
 
-    private fun initClickers() {
-
-    }
-
     private fun initObservers() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.songFoldersFlow.collect {
-                if (it.isEmpty()) {
-                    viewModel.updateSongs()
-                } else {
-                    (binding.rvFolders.adapter as FoldersAdapter).submitList(it)
-                }
+                (binding.rvFolders.adapter as FoldersAdapter).submitList(it)
             }
         }
     }

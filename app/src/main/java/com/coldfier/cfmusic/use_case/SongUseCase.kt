@@ -1,12 +1,14 @@
 package com.coldfier.cfmusic.use_case
 
 import android.content.Context
+import com.coldfier.cfmusic.convertToAlbumWithThumbnail
 import com.coldfier.cfmusic.convertToRoomSong
 import com.coldfier.cfmusic.convertToSong
 import com.coldfier.cfmusic.convertToSongWithThumbnail
 import com.coldfier.cfmusic.data.database_room.model.SongFolder
 import com.coldfier.cfmusic.data.database_room.repository.RoomRepository
 import com.coldfier.cfmusic.data.external_storage.repository.ExternalStorageRepository
+import com.coldfier.cfmusic.use_case.model.Album
 import com.coldfier.cfmusic.use_case.model.Song
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -91,5 +93,9 @@ class SongUseCase @Inject constructor(
                 getSongsFromFolder(newFolderName).first()
             } catch (e: Exception) { listOf() }
         )
+    }
+
+    fun getAlbumList(): Flow<List<Album>> = roomRepository.getAlbumsList().map { roomAlbumList ->
+        roomAlbumList.map { roomAlbum ->  roomAlbum.convertToAlbumWithThumbnail(appContext) }
     }
 }

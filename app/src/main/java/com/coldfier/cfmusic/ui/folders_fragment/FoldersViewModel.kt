@@ -16,15 +16,4 @@ class FoldersViewModel @Inject constructor(
             emit(it)
         }
     }.flowOn(Dispatchers.IO)
-
-
-    init {
-        updateSongs()
-    }
-
-    fun updateSongs() {
-        launchInIOCoroutine {
-            songUseCase.getAllSongs()
-        }
-    }
 }

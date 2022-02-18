@@ -4,18 +4,19 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.media.AudioManager
+import android.media.session.MediaSession
 import android.net.Uri
 import android.os.Build
+import android.view.KeyEvent
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.coldfier.cfmusic.R
+import com.coldfier.cfmusic.media_browser_service.KeyEventBroadcastReceiver
 import com.coldfier.cfmusic.ui.picked_folder_fragment.ACTION_SONG_PICKED
 import com.coldfier.cfmusic.ui.picked_folder_fragment.SONG_KEY
 import com.coldfier.cfmusic.use_case.SongUseCase
@@ -37,50 +38,91 @@ class PlayerWorker(
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when(intent?.action) {
-                ACTION_REQUEST_PREVIOUS_SONG -> {
-                    previousSong.get()?.let { song ->
-                        currentSong = song
-                        renderSongInfo(song)
-                        song.fullPath?.let { path -> preparePlayer(path) }
-                        nextSong.set(null)
-                        previousSong.set(null)
+                Intent.ACTION_MEDIA_BUTTON, ACTION_REQUEST_PREVIOUS_SONG,
+                ACTION_REQUEST_PLAY_PAUSE_SONG, ACTION_REQUEST_NEXT_SONG -> {
+                    val keyEvent: KeyEvent? = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT)
 
-                        val intentUpdateSongInfo = Intent(ACTION_UPDATE_SONG_INFO)
-                        intentUpdateSongInfo.putExtra(SONG_KEY, song)
-                        LocalBroadcastManager.getInstance(applicationContext)
-                            .sendBroadcast(intentUpdateSongInfo)
+                    when(keyEvent?.keyCode) {
+                        KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                            previousSong.get()?.let { song ->
+                                currentSong = song
+                                renderSongInfo(song)
+                                song.fullPath?.let { path -> preparePlayer(path) }
+                                nextSong.set(null)
+                                previousSong.set(null)
 
-                        getPreviousAndNextSong(song)
-                    }
-                }
+                                val intentUpdateSongInfo = Intent(ACTION_UPDATE_SONG_INFO)
+                                intentUpdateSongInfo.putExtra(SONG_KEY, song)
+                                LocalBroadcastManager.getInstance(applicationContext)
+                                    .sendBroadcast(intentUpdateSongInfo)
 
-                ACTION_REQUEST_PLAY_PAUSE_SONG -> {
-                    if (player.isPlaying) {
-                        player.pause()
-                        notificationLayout
-                            .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_play)
-                    } else {
-                        player.play()
-                        notificationLayout
-                            .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_pause)
-                    }
+                                getPreviousAndNextSong(song)
+                            }
+                        }
 
-                }
+                        KeyEvent.KEYCODE_MEDIA_PAUSE -> {
+                            if (player.isPlaying) {
+                                player.pause()
+                                notificationLayout
+                                    .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_play)
+                                notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
 
-                ACTION_REQUEST_NEXT_SONG -> {
-                    nextSong.get()?.let { song ->
-                        currentSong = song
-                        renderSongInfo(song)
-                        song.fullPath?.let { path -> preparePlayer(path) }
-                        nextSong.set(null)
-                        previousSong.set(null)
+                                val playPauseIntent = Intent(ACTION_CHANGE_PLAY_BUTTON_ICON)
+                                playPauseIntent.putExtra(EXTRA_IS_PLAYING, player.isPlaying)
+                                LocalBroadcastManager.getInstance(applicationContext)
+                                    .sendBroadcast(playPauseIntent)
+                            }
+                        }
 
-                        val intentUpdateSongInfo = Intent(ACTION_UPDATE_SONG_INFO)
-                        intentUpdateSongInfo.putExtra(SONG_KEY, song)
-                        LocalBroadcastManager.getInstance(applicationContext)
-                            .sendBroadcast(intentUpdateSongInfo)
+                        KeyEvent.KEYCODE_MEDIA_PLAY -> {
+                            if (!player.isPlaying) {
+                                player.play()
+                                notificationLayout
+                                    .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_pause)
+                                notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
 
-                        getPreviousAndNextSong(song)
+                                val playPauseIntent = Intent(ACTION_CHANGE_PLAY_BUTTON_ICON)
+                                playPauseIntent.putExtra(EXTRA_IS_PLAYING, player.isPlaying)
+                                LocalBroadcastManager.getInstance(applicationContext)
+                                    .sendBroadcast(playPauseIntent)
+                            }
+                        }
+
+                        KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
+                            if (player.isPlaying) {
+                                player.pause()
+                                notificationLayout
+                                    .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_play)
+                                notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
+                            } else {
+                                player.play()
+                                notificationLayout
+                                    .setImageViewResource(R.id.btn_play_song_collapsed, R.drawable.ic_pause)
+                                notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
+                            }
+
+                            val playPauseIntent = Intent(ACTION_CHANGE_PLAY_BUTTON_ICON)
+                            playPauseIntent.putExtra(EXTRA_IS_PLAYING, player.isPlaying)
+                            LocalBroadcastManager.getInstance(applicationContext)
+                                .sendBroadcast(playPauseIntent)
+                        }
+
+                        KeyEvent.KEYCODE_MEDIA_NEXT -> {
+                            nextSong.get()?.let { song ->
+                                currentSong = song
+                                renderSongInfo(song)
+                                song.fullPath?.let { path -> preparePlayer(path) }
+                                nextSong.set(null)
+                                previousSong.set(null)
+
+                                val intentUpdateSongInfo = Intent(ACTION_UPDATE_SONG_INFO)
+                                intentUpdateSongInfo.putExtra(SONG_KEY, song)
+                                LocalBroadcastManager.getInstance(applicationContext)
+                                    .sendBroadcast(intentUpdateSongInfo)
+
+                                getPreviousAndNextSong(song)
+                            }
+                        }
                     }
                 }
             }
@@ -118,18 +160,24 @@ class PlayerWorker(
     override suspend fun doWork(): Result {
         val intentFilter = IntentFilter()
         intentFilter.apply {
+            addAction(Intent.ACTION_MEDIA_BUTTON)
             addAction(ACTION_REQUEST_PREVIOUS_SONG)
             addAction(ACTION_REQUEST_PLAY_PAUSE_SONG)
             addAction(ACTION_REQUEST_NEXT_SONG)
-            addAction(ACTION_SONG_PICKED)
         }
         applicationContext.registerReceiver(broadcastReceiver, intentFilter)
 
         val songFilter = IntentFilter(ACTION_SONG_PICKED)
         LocalBroadcastManager
             .getInstance(applicationContext).registerReceiver(songReceiver, songFilter)
+
+        val audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        val receiverComponent = ComponentName(applicationContext, KeyEventBroadcastReceiver::class.java)
+        audioManager.registerMediaButtonEventReceiver(receiverComponent)
+
         return try {
-            notificationManager.notify(1, createNotification())
+            notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
 
             Result.success()
         } catch (e: Exception) {
@@ -148,6 +196,10 @@ class PlayerWorker(
         }
 
         val previousSongIntent = Intent(ACTION_REQUEST_PREVIOUS_SONG)
+        previousSongIntent.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+        )
         val previousSongPendingIntent = PendingIntent.getBroadcast(
             applicationContext, 0, previousSongIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -155,6 +207,10 @@ class PlayerWorker(
             .setOnClickPendingIntent(R.id.btn_previous_song_collapsed, previousSongPendingIntent)
 
         val playPauseIntent = Intent(ACTION_REQUEST_PLAY_PAUSE_SONG)
+        playPauseIntent.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+        )
         val playPausePendingIntent = PendingIntent.getBroadcast(
             applicationContext, 0, playPauseIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -162,6 +218,10 @@ class PlayerWorker(
             .setOnClickPendingIntent(R.id.btn_play_song_collapsed, playPausePendingIntent)
 
         val nextSongIntent = Intent(ACTION_REQUEST_NEXT_SONG)
+        nextSongIntent.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+        )
         val nextSongPendingIntent = PendingIntent.getBroadcast(
             applicationContext, 0, nextSongIntent, PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -179,7 +239,7 @@ class PlayerWorker(
     private fun renderSongInfo(song: Song) {
         notificationLayout.setTextViewText(R.id.tv_song_name_collapsed, song.songName ?: "")
         notificationLayout.setTextViewText(R.id.tv_song_artist_collapsed, song.artist ?: "")
-        notificationManager.notify(1, createNotification())
+        notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
     }
 
     private fun preparePlayer(filePath: String) {
@@ -191,7 +251,11 @@ class PlayerWorker(
         player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (playbackState == Player.STATE_ENDED) {
-                    val nextSongIntent = Intent(ACTION_REQUEST_NEXT_SONG)
+                    val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+                    nextSongIntent.putExtra(
+                        Intent.EXTRA_KEY_EVENT,
+                        KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+                    )
                     applicationContext.sendBroadcast(nextSongIntent)
                 }
             }
@@ -234,13 +298,18 @@ class PlayerWorker(
     }
 
     companion object {
+        const val PLAYER_NOTIFICATION_ID = 2048
+
         const val MUSIC_CHANNEL_ID = "com.coldfier.cfmusic.music_channel_id"
         const val MUSIC_CHANNEL_NAME = "com.coldfier.cfmusic.music_channel_name"
+
+        const val ACTION_UPDATE_SONG_INFO = "com.coldfier.cfmusic.action_update_song_info"
+
+        const val ACTION_CHANGE_PLAY_BUTTON_ICON = "com.coldfier.cfmusic.action_change_play_button_icon"
+        const val EXTRA_IS_PLAYING  = "com.coldfier.cfmusic.extra_is_playing"
 
         const val ACTION_REQUEST_PREVIOUS_SONG = "com.coldfier.cfmusic.request_previous_song"
         const val ACTION_REQUEST_NEXT_SONG = "com.coldfier.cfmusic.request_next_song"
         const val ACTION_REQUEST_PLAY_PAUSE_SONG = "com.coldfier.cfmusic.request_play_pause_song"
-
-        const val ACTION_UPDATE_SONG_INFO = "com.coldfier.cfmusic.action_update_song_info"
     }
 }

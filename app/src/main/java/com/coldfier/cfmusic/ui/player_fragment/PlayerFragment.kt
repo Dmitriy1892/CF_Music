@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
 import android.widget.CheckBox
 import androidx.fragment.app.viewModels
@@ -17,7 +18,9 @@ import com.coldfier.cfmusic.ui.MainActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.coldfier.cfmusic.ui.picked_folder_fragment.ACTION_SONG_PICKED
 import com.coldfier.cfmusic.ui.picked_folder_fragment.SONG_KEY
+import com.coldfier.cfmusic.ui.player_fragment.PlayerWorker.Companion.ACTION_CHANGE_PLAY_BUTTON_ICON
 import com.coldfier.cfmusic.ui.player_fragment.PlayerWorker.Companion.ACTION_UPDATE_SONG_INFO
+import com.coldfier.cfmusic.ui.player_fragment.PlayerWorker.Companion.EXTRA_IS_PLAYING
 import com.coldfier.cfmusic.use_case.model.Song
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -49,6 +52,11 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
                     song?.let { viewModel.setCurrentSong(it) }
                 }
 
+                ACTION_CHANGE_PLAY_BUTTON_ICON -> {
+                    val isPlaying = intent.getBooleanExtra(EXTRA_IS_PLAYING, false)
+                    binding.btnPlaySong.isChecked = isPlaying
+                    binding.btnPlaySongCollapsed.isChecked = isPlaying
+                }
             }
         }
     }
@@ -100,7 +108,10 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         startTimer()
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(
             songBroadcastReceiver,
-            IntentFilter(ACTION_SONG_PICKED).apply { addAction(ACTION_UPDATE_SONG_INFO) }
+            IntentFilter(ACTION_SONG_PICKED).apply {
+                addAction(ACTION_UPDATE_SONG_INFO)
+                addAction(ACTION_CHANGE_PLAY_BUTTON_ICON)
+            }
         )
     }
 
@@ -200,12 +211,20 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         })
 
         binding.btnPreviousSong.setOnClickListener {
-            val previousSongIntent = Intent(PlayerWorker.ACTION_REQUEST_PREVIOUS_SONG)
+            val previousSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+            previousSongIntent.putExtra(
+                Intent.EXTRA_KEY_EVENT,
+                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+            )
             requireActivity().sendBroadcast(previousSongIntent)
         }
 
         binding.btnPreviousSongCollapsed.setOnClickListener {
-            val previousSongIntent = Intent(PlayerWorker.ACTION_REQUEST_PREVIOUS_SONG)
+            val previousSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+            previousSongIntent.putExtra(
+                Intent.EXTRA_KEY_EVENT,
+                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+            )
             requireActivity().sendBroadcast(previousSongIntent)
         }
 
@@ -226,12 +245,20 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         }
 
         binding.btnNextSong.setOnClickListener {
-            val nextSongIntent = Intent(PlayerWorker.ACTION_REQUEST_NEXT_SONG)
+            val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+            nextSongIntent.putExtra(
+                Intent.EXTRA_KEY_EVENT,
+                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+            )
             requireActivity().sendBroadcast(nextSongIntent)
         }
 
         binding.btnNextSongCollapsed.setOnClickListener {
-            val nextSongIntent = Intent(PlayerWorker.ACTION_REQUEST_NEXT_SONG)
+            val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+            nextSongIntent.putExtra(
+                Intent.EXTRA_KEY_EVENT,
+                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+            )
             requireActivity().sendBroadcast(nextSongIntent)
         }
     }
@@ -249,12 +276,24 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     private var timer = Timer()
 
     private fun play() {
-        player.play()
+        val playPauseIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+        playPauseIntent.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+        )
+        requireActivity().sendBroadcast(playPauseIntent)
+
         startTimer()
     }
 
     private fun pause() {
-        player.pause()
+        val playPauseIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+        playPauseIntent.putExtra(
+            Intent.EXTRA_KEY_EVENT,
+            KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+        )
+        requireActivity().sendBroadcast(playPauseIntent)
+
         stopTimer()
     }
 

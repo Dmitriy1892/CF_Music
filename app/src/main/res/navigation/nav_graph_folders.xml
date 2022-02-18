@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_folders"
+    app:startDestination="@id/foldersFragment">
+
+    <fragment
+        android:id="@+id/foldersFragment"
+        android:name="com.coldfier.cfmusic.ui.folders_fragment.FoldersFragment"
+        android:label="fragment_folders"
+        tools:layout="@layout/fragment_folders" >
+        <action
+            android:id="@+id/action_foldersFragment_to_pickedFolderFragment"
+            app:destination="@id/pickedFolderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pickedFolderFragment"
+        android:name="com.coldfier.cfmusic.ui.picked_folder_fragment.PickedFolderFragment"
+        android:label="PickedFolderFragment"
+        tools:layout="@layout/fragment_picked_folder">
+        <argument
+            android:name="folderName"
+            app:argType="string" />
+    </fragment>
+</navigation>
