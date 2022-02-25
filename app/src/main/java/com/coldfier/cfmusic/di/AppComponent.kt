@@ -6,6 +6,7 @@ import com.coldfier.cfmusic.App
 import com.coldfier.cfmusic.di.module.DatabaseModule
 import com.coldfier.cfmusic.di.module.PlayerModule
 import com.coldfier.cfmusic.di.module.ViewModelsModule
+import com.coldfier.cfmusic.media_browser_service.PlayerMediaBrowserService
 import com.coldfier.cfmusic.ui.base.BaseActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.coldfier.cfmusic.ui.base.BaseViewModel
@@ -30,6 +31,8 @@ interface AppComponent {
     fun injectApp(application: App)
 
     fun injectPlayer(fragment: PlayerFragment)
+
+    fun injectPlayerToService(playerMediaBrowserService: PlayerMediaBrowserService)
 
     @Component.Builder
     interface Builder {

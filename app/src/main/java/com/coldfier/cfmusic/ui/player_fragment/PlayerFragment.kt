@@ -1,11 +1,12 @@
 package com.coldfier.cfmusic.ui.player_fragment
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
+import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.KeyEvent
 import android.view.View
 import android.widget.CheckBox
@@ -14,6 +15,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.coldfier.cfmusic.App
 import com.coldfier.cfmusic.R
 import com.coldfier.cfmusic.databinding.FragmentPlayerBinding
+import com.coldfier.cfmusic.media_browser_service.PlayerMediaBrowserService
 import com.coldfier.cfmusic.ui.MainActivity
 import com.coldfier.cfmusic.ui.base.BaseFragment
 import com.coldfier.cfmusic.ui.picked_folder_fragment.ACTION_SONG_PICKED
@@ -44,6 +46,42 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
     @Inject
     lateinit var player: ExoPlayer
 
+    private lateinit var mediaBrowser: MediaBrowserCompat
+
+    private val connectionCallback = object : MediaBrowserCompat.ConnectionCallback() {
+        override fun onConnected() {
+
+            mediaBrowser.sessionToken.also { token ->
+                val mediaController = MediaControllerCompat(requireContext(), token)
+                MediaControllerCompat.setMediaController(requireActivity(), mediaController)
+            }
+
+            buildTransportControls()
+        }
+
+        override fun onConnectionSuspended() {
+            //TODO - The Service has crashed. Disable transport controls until it automatically reconnects
+        }
+
+        override fun onConnectionFailed() {
+            //TODO - The Service has refused our connection
+        }
+    }
+
+    private val controllerCallback = object : MediaControllerCompat.Callback() {
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            super.onMetadataChanged(metadata)
+        }
+
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+            super.onPlaybackStateChanged(state)
+        }
+
+        override fun onSessionDestroyed() {
+            mediaBrowser.disconnect()
+        }
+    }
+
     private val songBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
@@ -65,6 +103,13 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         super.onCreate(savedInstanceState)
 
         (requireContext().applicationContext as App).appComponent.injectPlayer(this)
+
+        mediaBrowser = MediaBrowserCompat(
+            requireContext(),
+            ComponentName(requireContext(), PlayerMediaBrowserService::class.java),
+            connectionCallback,
+            null
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,14 +139,6 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-
-        stopTimer()
-        LocalBroadcastManager.getInstance(requireContext())
-            .unregisterReceiver(songBroadcastReceiver)
-    }
-
     override fun onStart() {
         super.onStart()
 
@@ -113,6 +150,21 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
                 addAction(ACTION_CHANGE_PLAY_BUTTON_ICON)
             }
         )
+
+        mediaBrowser.connect()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        stopTimer()
+        LocalBroadcastManager.getInstance(requireContext())
+            .unregisterReceiver(songBroadcastReceiver)
+
+        MediaControllerCompat
+            .getMediaController(requireActivity())?.unregisterCallback(controllerCallback)
+
+        mediaBrowser.disconnect()
     }
 
     private fun initViews() {
@@ -210,57 +262,57 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
             }
         })
 
-        binding.btnPreviousSong.setOnClickListener {
-            val previousSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-            previousSongIntent.putExtra(
-                Intent.EXTRA_KEY_EVENT,
-                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-            )
-            requireActivity().sendBroadcast(previousSongIntent)
-        }
-
-        binding.btnPreviousSongCollapsed.setOnClickListener {
-            val previousSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-            previousSongIntent.putExtra(
-                Intent.EXTRA_KEY_EVENT,
-                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-            )
-            requireActivity().sendBroadcast(previousSongIntent)
-        }
-
-        binding.btnPlaySong.setOnClickListener {
-            if (!(it as CheckBox).isChecked) {
-                pause()
-            } else {
-                play()
-            }
-        }
-
-        binding.btnPlaySongCollapsed.setOnClickListener {
-            if (!(it as CheckBox).isChecked) {
-                pause()
-            } else {
-                play()
-            }
-        }
-
-        binding.btnNextSong.setOnClickListener {
-            val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-            nextSongIntent.putExtra(
-                Intent.EXTRA_KEY_EVENT,
-                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
-            )
-            requireActivity().sendBroadcast(nextSongIntent)
-        }
-
-        binding.btnNextSongCollapsed.setOnClickListener {
-            val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-            nextSongIntent.putExtra(
-                Intent.EXTRA_KEY_EVENT,
-                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
-            )
-            requireActivity().sendBroadcast(nextSongIntent)
-        }
+//        binding.btnPreviousSong.setOnClickListener {
+//            val previousSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+//            previousSongIntent.putExtra(
+//                Intent.EXTRA_KEY_EVENT,
+//                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+//            )
+//            requireActivity().sendBroadcast(previousSongIntent)
+//        }
+//
+//        binding.btnPreviousSongCollapsed.setOnClickListener {
+//            val previousSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+//            previousSongIntent.putExtra(
+//                Intent.EXTRA_KEY_EVENT,
+//                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
+//            )
+//            requireActivity().sendBroadcast(previousSongIntent)
+//        }
+//
+//        binding.btnPlaySong.setOnClickListener {
+//            if (!(it as CheckBox).isChecked) {
+//                pause()
+//            } else {
+//                play()
+//            }
+//        }
+//
+//        binding.btnPlaySongCollapsed.setOnClickListener {
+//            if (!(it as CheckBox).isChecked) {
+//                pause()
+//            } else {
+//                play()
+//            }
+//        }
+//
+//        binding.btnNextSong.setOnClickListener {
+//            val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+//            nextSongIntent.putExtra(
+//                Intent.EXTRA_KEY_EVENT,
+//                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+//            )
+//            requireActivity().sendBroadcast(nextSongIntent)
+//        }
+//
+//        binding.btnNextSongCollapsed.setOnClickListener {
+//            val nextSongIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+//            nextSongIntent.putExtra(
+//                Intent.EXTRA_KEY_EVENT,
+//                KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_NEXT)
+//            )
+//            requireActivity().sendBroadcast(nextSongIntent)
+//        }
     }
 
     private fun initObservers() {
@@ -338,5 +390,49 @@ class PlayerFragment: BaseFragment<PlayerViewModel, FragmentPlayerBinding>(R.lay
         } catch (e: Exception) {
 
         }
+    }
+
+    private fun buildTransportControls() {
+        val mediaController = MediaControllerCompat.getMediaController(requireActivity())
+
+        binding.btnPreviousSong.setOnClickListener {
+            mediaController.transportControls.skipToPrevious()
+        }
+
+        binding.btnPreviousSongCollapsed.setOnClickListener {
+            mediaController.transportControls.skipToPrevious()
+        }
+
+        binding.btnPlaySong.setOnClickListener {
+            if (!(it as CheckBox).isChecked) {
+                mediaController.transportControls.pause()
+                pause()
+            } else {
+                mediaController.transportControls.play()
+                play()
+            }
+        }
+
+        binding.btnPlaySongCollapsed.setOnClickListener {
+            if (!(it as CheckBox).isChecked) {
+                mediaController.transportControls.pause()
+                pause()
+            } else {
+                mediaController.transportControls.play()
+                play()
+            }
+        }
+
+        binding.btnNextSong.setOnClickListener {
+            mediaController.transportControls.skipToNext()
+        }
+
+        binding.btnNextSongCollapsed.setOnClickListener {
+            mediaController.transportControls.skipToNext()
+        }
+
+        val metadata = mediaController.metadata
+        val pbState = mediaController.playbackState
+        mediaController.registerCallback(controllerCallback)
     }
 }

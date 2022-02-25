@@ -9,6 +9,8 @@ import android.media.AudioManager
 import android.media.session.MediaSession
 import android.net.Uri
 import android.os.Build
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.KeyEvent
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat

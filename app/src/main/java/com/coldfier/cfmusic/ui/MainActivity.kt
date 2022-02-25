@@ -41,8 +41,6 @@ class MainActivity: BaseActivity<MainViewModel, ActivityMainBinding>(R.layout.ac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         if (!checkReadExternalStoragePermission()) {
             requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
             requestReadExternalStoragePermission()
