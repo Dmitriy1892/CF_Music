@@ -1,43 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<androidx.compose.ui.platform.ComposeView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="vertical">
+<!--<layout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:tools="http://schemas.android.com/tools">-->
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:orientation="vertical">-->
 
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_folder"
-                android:text="@string/app_name"/>
+<!--        <FrameLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal">-->
 
-            <TextView
-                android:id="@+id/tv_song_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:fontFamily="@font/sf_font_regular"
-                android:textColor="#969AA5"
-                tools:text="52"/>
-        </FrameLayout>
+<!--            <ImageView-->
+<!--                android:layout_width="70dp"-->
+<!--                android:layout_height="70dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:src="@drawable/ic_folder"-->
+<!--                android:text="@string/app_name"/>-->
 
-        <TextView
-            android:id="@+id/tv_folder_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/sf_font_regular"
-            android:textColor="#0E172D"
-            tools:text="Folder" />
-    </LinearLayout>
-</layout>
+<!--            <TextView-->
+<!--                android:id="@+id/tv_song_value"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:fontFamily="@font/sf_font_regular"-->
+<!--                android:textColor="#969AA5"-->
+<!--                tools:text="52"/>-->
+<!--        </FrameLayout>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/tv_folder_name"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:fontFamily="@font/sf_font_regular"-->
+<!--            android:textColor="#0E172D"-->
+<!--            tools:text="Folder" />-->
+<!--    </LinearLayout>-->
+<!--</layout>-->

@@ -8,8 +8,8 @@
         android:layout_height="match_parent"
         tools:context=".ui.folders_fragment.FoldersFragment">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_folders"
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/folders_compose_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"

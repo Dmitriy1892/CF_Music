@@ -4,4 +4,7 @@
     <!-- Strings used for fragments for navigation -->
 
     <string name="pause">Pause</string>
+
+    <string name="albums_tab">Albums</string>
+    <string name="folders_tab">Folders</string>
 </resources>

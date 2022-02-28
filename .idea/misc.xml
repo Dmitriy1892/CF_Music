@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Kotlin/CF_Music/app/src/main/res/drawable/bg_tab_indicator.xml" value="0.1425" />
+        <entry key="..\:/Kotlin/CF_Music/app/src/main/res/layout/activity_main.xml" value="0.11302083333333333" />
+        <entry key="..\:/Kotlin/CF_Music/app/src/main/res/layout/fragment_folders.xml" value="0.25416666666666665" />
+        <entry key="..\:/Kotlin/CF_Music/app/src/main/res/layout/rv_item_music_folder.xml" value="0.25416666666666665" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable-anydpi/ic_collapse_arrow.xml" value="0.2985" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/bg_album_placeholder.xml" value="0.18" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_album.xml" value="0.2985" />
