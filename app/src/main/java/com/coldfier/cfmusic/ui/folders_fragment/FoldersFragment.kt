@@ -9,8 +9,8 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ExperimentalMaterialApi
@@ -80,7 +80,7 @@ class FoldersFragment :
 @Composable
 fun FoldersListView(foldersList: List<SongFolder>, clickListener: (folder: SongFolder) -> Unit) {
     LazyVerticalGrid(
-        cells = GridCells.Fixed(count = 3),
+        columns = GridCells.Fixed(count = 3),
         modifier = Modifier
             .fillMaxWidth()
             .height(800.dp)

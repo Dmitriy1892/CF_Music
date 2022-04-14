@@ -13,7 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="invisible"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appbar"
@@ -234,7 +234,7 @@
             android:id="@+id/layout_collapsed"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <View
                 android:id="@+id/divider"

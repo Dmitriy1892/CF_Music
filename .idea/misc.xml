@@ -10,8 +10,26 @@
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable-anydpi/ic_collapse_arrow.xml" value="0.2985" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/bg_album_placeholder.xml" value="0.18" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_album.xml" value="0.2985" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_favorite_off.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_favorite_on.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_folder.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_pause.xml" value="0.161" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_play.xml" value="0.161" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_previous_song_off.xml" value="0.161" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_previous_song_on.xml" value="0.161" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_repeat_all.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_repeat_one.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_shuffle_off.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_shuffle_on.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_volume_off.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/ic_volume_on.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_checkbox_favorite_song.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_checkbox_repeat.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_checkbox_shuffle.xml" value="0.165" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_checkbox_volume.xml" value="0.165" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_next_song.xml" value="0.2985" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_play_pause_song.xml" value="0.2985" />
+        <entry key="..\:/MyProjects/CF_Music/app/src/main/res/drawable/selector_previous_song.xml" value="0.161" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout-land/fragment_player.xml" value="0.4036036036036036" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/MyProjects/CF_Music/app/src/main/res/layout/fragment_albums.xml" value="0.36666666666666664" />
